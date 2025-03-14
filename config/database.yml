@@ -1,0 +1,21 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: <%= ENV["PG_USERNAME"] || "postgres" %>  # Default user, or your custom user
+  password: <%= ENV["PG_PASSWORD"] %>               # Leave blank if no password, or set it
+  host: localhost
+
+development:
+  <<: *default
+  database: jv_deal_team_development
+
+test:
+  <<: *default
+  database: jv_deal_team_test
+
+production:
+  <<: *default
+  database: jv_deal_team_production
+  username: <%= ENV["PG_USERNAME"] %>
+  password: <%= ENV["PG_PASSWORD"] %>

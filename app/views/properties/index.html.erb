@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">Property Marketplace</h1>
+  </div>
+    <!-- State Filter Dropdown -->
+    <div class="mb-4">
+      <%= form_with url: properties_path, method: :get, local: true, class: 'form-inline' do |form| %>
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <%= form.label :state, "Filter by State", class: 'form-label mr-2' %>
+            <%= form.select :state, options_for_select([["All States", ""]] + Property::US_STATES, params[:state]), {}, class: 'form-select', onchange: 'this.form.submit()' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="row">
+    <% @properties.each do |property| %>
+      <div class="col-md-4 mb-3">
+        <div class="card h-100">
+          <% if can_view_full_property_details?(property) %>
+            <!-- Full details for owner or interested user -->
+            <% if property.images.any? %>
+              <%= image_tag property.images.first.medium.url || "/images/default_property_image.jpg", class: 'card-img-top', alt: "Property image", loading: 'lazy' %>
+            <% else %>
+              <%= image_tag "/images/default_property_image.jpg", class: 'card-img-top', alt: "Property image", loading: 'lazy' %>
+            <% end %>
+            <div class="card-body">
+              <h2 class="card-title"><%= link_to property.title, property, class: "text-decoration-none" %></h2>
+              <p class="card-text">Price: <%= number_to_currency(property.price) %></p>
+              <p class="card-text">Address: <%= [property.street_address, property.city, full_state_name(property.state), property.zip_code].join(", ") %></p>
+              <p class="card-text">Listed by: <%= property.user.name %></p>
+              <% if user_signed_in? && property.user == current_user %>
+                <%= link_to "Edit", edit_property_path(property), class: "btn btn-outline-primary btn-sm" %>
+              <% end %>
+            </div>
+          <% else %>
+            <!-- Limited details for others -->
+            <%= render_property_preview(property) %>
+            <div class="card-body">
+              <p class="card-text">Listed by: <%= property.user.name %></p>
+              <% if user_signed_in? && property.user != current_user %>
+                <% unless current_user.interested_properties.include?(property) %>
+                  <%= form_with url: interests_path, method: :post, local: true do |form| %>
+                    <%= form.hidden_field :property_id, value: property.id %>
+                    <%= form.submit "Express Interest", class: "btn btn-primary btn-sm mb-2" %>
+                  <% end %>
+                <% else %>
+                  <p class="text-success">You’ve expressed interest in this property.</p>
+                <% end %>
+              <% end %>
+              <%= link_to "View More", property_path(property), class: "btn btn-outline-primary btn-sm" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

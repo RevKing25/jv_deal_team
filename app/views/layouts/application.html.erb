@@ -1,0 +1,78 @@
+<!-- app/views/layouts/application.html.erb -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JvDealTeam</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+    <!-- Bootstrap JS for navbar toggler -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Add Bootstrap Icons CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Bootstrap Navbar -->
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">JV Deal Team</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <% if user_signed_in? %>
+          <li class="nav-item">
+            <%= link_to profile_user_path(current_user), class: 'nav-link' do %>
+              <i class="bi bi-person"></i> My Profile
+            <% end %>
+          </li>
+          <li class="nav-item">
+  <%= link_to "All Users", users_path, class: "nav-link" %>
+</li>
+          <li class="nav-item">
+      <%= link_to messages_user_path(current_user), class: 'nav-link position-relative' do %>
+          <i class="bi bi-envelope"></i> Messages
+            <% unread_count = current_user.unread_messages_count %>
+              <% if unread_count > 0 %>
+            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle"><%= unread_count %>  
+            </span>
+        <% end %>
+  <% end %>
+</li>
+          
+          <li class="nav-item">
+            <%= link_to new_property_path, class: 'nav-link' do %>
+              <i class="bi bi-house-add"></i> New Property
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to destroy_user_session_path, method: :delete, class: 'nav-link' do %>
+              <i class="bi bi-box-arrow-right"></i> Sign Out
+            <% end %>
+          </li>
+        <% else %>
+          <li class="nav-item">
+            <%= link_to new_user_session_path, class: 'nav-link' do %>
+              <i class="bi bi-box-arrow-in-right"></i> Sign In
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to new_user_registration_path, class: 'nav-link' do %>
+              <i class="bi bi-person-plus"></i> Create Account
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  <!-- Main Content -->
+  <div class="container mt-4">
+    <%= yield %>
+  </div>
+</body>
+</html>

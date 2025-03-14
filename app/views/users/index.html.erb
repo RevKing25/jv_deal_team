@@ -1,0 +1,44 @@
+<div class="container">
+  <h1>All Users</h1>
+
+  <!-- State Search Form -->
+  <%= form_with url: users_path, method: :get, local: true, class: "mb-4" do |form| %>
+    <div class="row">
+      <div class="col-md-4">
+        <%= form.label :state, "Filter by State", class: "form-label" %>
+        <%= form.select :state, options_for_select(@states, params[:state]), { include_blank: "All States" }, class: "form-select" %>
+      </div>
+      <div class="col-md-2 align-self-end">
+        <%= form.submit "Search", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Users List -->
+  <% if @users.any? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>States</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+            <td><%= user.role&.capitalize || "N/A" %></td>
+            <td><%= user.states.join(", ").presence || "N/A" %></td><!-- Or property state if applicable -->
+            <td><%= link_to "View Profile", user_path(user), class: "btn btn-sm btn-outline-primary" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No users found.</p>
+  <% end %>
+</div>

@@ -1,0 +1,94 @@
+<div class="container-fluid mt-4">
+  <div class="row">
+    <!-- Sidebar: List of Conversations -->
+    <div class="col-md-4 col-lg-3">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Conversations</h5>
+        </div>
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            <% @conversation_partners.each do |partner| %>
+              <li class="list-group-item <%= 'active' if partner == @selected_user %>">
+                <%= link_to messages_user_path(@user, with_user_id: partner.id), class: 'text-decoration-none' do %>
+                  <div class="d-flex align-items-center">
+                    <% if partner.profile_photo.present? %>
+                      <%= image_tag partner.profile_photo.thumb.url, class: 'rounded-circle me-2', style: 'width: 40px; height: 40px;', alt: "#{partner.name}'s photo" %>
+                    <% else %>
+                      <%= image_tag partner.profile_photo.default_url, class: 'rounded-circle me-2', style: 'width: 40px; height: 40px;', alt: "Default photo" %>
+                    <% end %>
+                    <div>
+                      <strong><%= partner.name %></strong>
+                      <% last_message = @user.messages_with(partner).last %>
+                      <% if last_message %>
+                        <p class="small text-muted mb-0">
+                          <%= truncate(last_message.content, length: 30) %>
+                        </p>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </li>
+            <% end %>
+            <% if @conversation_partners.empty? %>
+              <li class="list-group-item text-muted">No conversations yet.</li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="col-md-8 col-lg-9">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <% if @selected_user %>
+              Conversation with <%= @selected_user.name %>
+            <% else %>
+              No Conversation Selected
+            <% end %>
+          </h5>
+        </div>
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+          <% if @selected_user %>
+            <% @messages.each do |message| %>
+              <div class="mb-3 <%= message.sender == @user ? 'text-end' : 'text-start' %>">
+                <div class="d-inline-block p-2 rounded <%= message.sender == @user ? 'bg-primary text-white' : 'bg-light border' %>">
+                  <small class="d-block text-muted">
+                    <%= message.sender.name %> | <%= message.created_at.in_time_zone.strftime("%B %d, %Y at %I:%M %p") %>
+                  </small>
+                  <%= message.content %>
+                  <% if message.property %>
+                    <br>
+                    <small class="text-muted">
+                      <% if can_view_full_property_details?(message.property) %>
+                        About: <%= link_to message.property.title, message.property %>
+                      <% else %>
+                        About a property in <%= message.property.city %>, <%= message.property.state %>
+                      <% end %>
+                    </small>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="text-muted">Select a conversation to start chatting.</p>
+          <% end %>
+        </div>
+        <% if @selected_user %>
+          <div class="card-footer">
+            <%= form_with model: Message.new, url: messages_path, method: :post, class: 'd-flex align-items-center', local: true do |form| %>
+              <%= form.hidden_field :receiver_id, value: @selected_user.id %>
+              <% if @messages.first&.property %>
+                <%= form.hidden_field :property_id, value: @messages.first.property_id %>
+              <% end %>
+              <%= form.text_area :content, placeholder: "Type your message...", class: 'form-control me-2', rows: 2 %>
+              <%= form.submit "Send", class: 'btn btn-primary' %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

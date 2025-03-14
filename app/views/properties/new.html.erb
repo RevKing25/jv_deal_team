@@ -1,0 +1,83 @@
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">Add New Property</h1>
+    <%= form_with model: @property, local: true do |form| %>
+      <% if @property.errors.any? %>
+        <div class="alert alert-danger">
+          <h2><%= pluralize(@property.errors.count, "error") %> prohibited this property from being saved:</h2>
+          <ul>
+            <% @property.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= form.label :title, class: 'form-label' %>
+        <%= form.text_field :title, class: 'form-control' %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :description, class: 'form-label' %>
+        <%= form.text_area :description, class: 'form-control', rows: 5 %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :price, class: 'form-label' %>
+        <%= form.number_field :price, class: 'form-control', step: '0.01' %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :street_address, class: 'form-label' %>
+        <%= form.text_field :street_address, class: 'form-control' %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :city, class: 'form-label' %>
+        <%= form.text_field :city, class: 'form-control' %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :state, class: 'form-label' %>
+        <%= form.select :state, options_for_select(Property::US_STATES, selected: @property.state), { prompt: 'Select a state' }, class: 'form-select' %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :zip_code, class: 'form-label' %>
+        <%= form.text_field :zip_code, class: 'form-control' %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :images, "Property Images", class: 'form-label' %>
+        <% if @property.images.any? %>
+          <div class="row mb-3">
+            <% @property.images.each_with_index do |image, index| %>
+              <div class="col-md-4 mb-2">
+                <%= image_tag image.thumb.url, class: 'img-thumbnail', alt: "Property image #{index + 1}" %>
+                <%= link_to 'Delete', destroy_image_property_path(@property, image_index: index), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm mt-2' %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        <%= form.file_field :images, multiple: true, class: 'form-control', id: 'property_images_input' %>
+        <div id="images_preview" class="mt-2 row"></div>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :contract_file, "Contract File", class: 'form-label' %>
+        <% if @property.contract_file.present? %>
+          <p>
+            Current: <%= link_to "Download", @property.contract_file.url %>
+          </p>
+          <%= form.check_box :remove_contract_file %>
+          <%= form.label :remove_contract_file, "Remove current contract", class: 'form-check-label' %>
+        <% end %>
+        <%= form.file_field :contract_file, class: 'form-control' %>
+      </div>
+
+      <%= form.submit 'Add Property', class: 'btn btn-primary' %>
+      <%= link_to 'Back', properties_path, class: 'btn btn-secondary ms-2' %>
+    <% end %>
+  </div>
+</div>

@@ -1,6 +1,6 @@
   class ApplicationController < ActionController::Base
   # Ensure Devise's authenticate_user! is available
-  before_action :authenticate_user!, except: :about
+  before_action :authenticate_user!, unless: :devise_controller?
 
   # Optional custom override (only if you need custom behavior)
   def authenticate_user!

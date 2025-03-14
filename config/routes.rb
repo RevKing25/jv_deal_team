@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'static_pages/about'
   devise_for :users, controllers: { registrations: 'users/registrations' }
 
   resources :properties, only: [:index, :new, :create, :show, :edit, :update] do
@@ -21,5 +22,5 @@ Rails.application.routes.draw do
   end
 
   delete '/profile/properties/:id', to: 'users#destroy', as: 'user_property'
-  root 'properties#index'
+  root "static_pages#about"
 end

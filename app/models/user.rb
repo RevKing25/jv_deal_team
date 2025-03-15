@@ -19,6 +19,12 @@ class User < ApplicationRecord
   mount_uploader :profile_photo, ProfilePhotoUploader
 
   validates :name, presence: true, unless: :resetting_password?
+  validate :password_complexity
+  validates :password, length: { minimum: 8 }, if: :password_present?
+  
+  def admin?
+    admin
+  end
 
   def unread_messages_count
     received_messages.where(read: false).count
@@ -39,6 +45,17 @@ class User < ApplicationRecord
   end
 
   private
+
+  def password_complexity
+    return unless password_present?
+    unless password.match?(/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
+      errors.add(:password, "must include at least one uppercase letter, one lowercase letter, one number, and one special character (e.g., !@#$%^&*)")
+    end
+  end
+
+  def password_present?
+    password.present?
+  end
 
   def resetting_password?
     reset_password_token.present? || persisted? && reset_password_sent_at.present?

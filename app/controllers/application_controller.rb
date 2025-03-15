@@ -8,6 +8,10 @@
     redirect_to new_user_session_path, alert: "Please sign in to access this page."
   end
 end
+
+  def after_sign_in_path_for(resource)
+    properties_path
+  end
  # Devise: Redirect after sign-out
   def after_sign_out_path_for(resource)
     root_path

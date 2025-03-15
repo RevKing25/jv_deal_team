@@ -16,13 +16,14 @@
         <%= f.file_field :profile_photo, class: 'form-control', required: true, id: 'profile_photo_input' %>
         <div id="photo_preview" class="mt-2"></div>
       </div>
-      <div class="mb-3">
-        <%= f.label :password, class: 'form-label' %>
-        <% if @minimum_password_length %>
-          <small class="form-text text-muted">(<%= @minimum_password_length %> characters minimum)</small>
-        <% end %>
-        <%= f.password_field :password, autocomplete: "new-password", class: 'form-control', required: true %>
-      </div>
+      
+            <div class="mb-3">
+              <%= f.label :password, class: "form-label" %>
+              <%= f.password_field :password, autocomplete: "new-password", class: "form-control", placeholder: "Enter your password" %>
+              <small class="form-text text-muted">
+                Must be at least 8 characters, with an uppercase letter, lowercase letter, number, and special character (e.g., !@#$%^&*).
+              </small>
+            </div>
       <div class="mb-3">
         <%= f.label :password_confirmation, class: 'form-label' %>
         <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control', required: true %>
@@ -36,7 +37,7 @@
 </div>
 
             <div class="mb-3">
-        <%= f.label :role, "I am a:", class: 'form-label' %>
+        <%= f.label :role, "My role:", class: 'form-label' %>
         <div class="form-check">
           <%= f.radio_button :role, "acquisitions", class: 'form-check-input', required: true %>
           <%= f.label :role_buyer, "Acquisitions", class: 'form-check-label' %>

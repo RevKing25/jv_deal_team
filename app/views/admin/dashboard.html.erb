@@ -1,0 +1,57 @@
+<div class="container mt-5">
+  <h1>Admin Dashboard</h1>
+
+  <h2>Users</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>States</th>
+        <th>Admin?</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td><%= user.email %></td>
+          <td><%= user.name %></td>
+          <td><%= user.role %></td>
+          <td><%= user.states_display %></td>
+          <td><%= user.admin? ? "Yes" : "No" %></td>
+          <td>
+            <%= link_to "Delete", admin_destroy_user_path(user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" unless user.admin? %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h2>Properties</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Expiration Date</th>
+        <th>Owner</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @properties.each do |property| %>
+        <tr>
+          <td><%= property.title %></td>
+          <td><%= number_to_currency(property.price) %></td>
+          <td><%= property.expiration_date.strftime("%B %d, %Y %I:%M %p") %></td>
+          <td><%= property.user.email %></td>
+          <td>
+            <%= link_to "Delete", admin_destroy_property_path(property), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

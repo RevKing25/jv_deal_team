@@ -69,6 +69,6 @@ end
   end
 
   def property_params
-  params.require(:property).permit(:title, :description, :price, :street_address, :city, :state, :remove_contract_file, :zip_code, :contract_file, :remove_contract_file, images: [])
+  params.require(:property).permit(:title, :description, :price, :street_address, :city, :state, :remove_contract_file, :zip_code, :contract_file, :remove_contract_file, :expiration_date, images: [])
 end
 end

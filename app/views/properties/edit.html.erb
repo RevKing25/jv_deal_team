@@ -49,6 +49,11 @@
       </div>
 
       <div class="mb-3">
+      <%= form.label :expiration_date, "Expiration Date", class: "form-label" %>
+      <%= form.datetime_field :expiration_date, class: "form-control", min: Time.current.strftime("%Y-%m-%dT%H:%M") %>
+    </div>
+    
+      <div class="mb-3">
         <%= form.label :images, "Property Images", class: 'form-label' %>
       <% if @property.images.any? %>
   <div class="row mb-3">

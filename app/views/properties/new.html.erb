@@ -48,6 +48,11 @@
         <%= form.text_field :zip_code, class: 'form-control' %>
       </div>
 
+         <div class="mb-3">
+      <%= form.label :expiration_date, "Expiration Date", class: "form-label" %>
+      <%= form.datetime_field :expiration_date, value: 30.days.from_now.strftime("%Y-%m-%dT%H:%M"), min: Time.current.strftime("%Y-%m-%dT%H:%M"), class: "form-control" %>
+    </div>
+    
       <div class="mb-3">
         <%= form.label :images, "Property Images", class: 'form-label' %>
         <% if @property.images.any? %>

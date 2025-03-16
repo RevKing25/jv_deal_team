@@ -3,14 +3,12 @@ class PropertiesController < ApplicationController
   before_action :set_property, only: [:show, :edit, :update, :destroy_image]
   before_action :authorize_user, only: [:edit, :update, :destroy_image]
 
-  def index
-    # Base scope is only active properties
-    @properties = Property.active
-    if params[:state].present? && Property::US_STATES.map(&:last).include?(params[:state])
-      @properties = @properties.where(state: params[:state])
-    end
-    # No else needed; @properties is already set to active scope
+    def index
+  @properties = Property.active
+  if params[:state].present? && Property::US_STATES.map(&:last).include?(params[:state])
+    @properties = @properties.where(state: params[:state])
   end
+end
 
   def show
     # Allow owner to see expired property, others see only active

@@ -18,12 +18,16 @@ class UsersController < ApplicationController
 
   
 def index
-  @users = User.all
-  if params[:state].present?
-    @users = @users.select { |user| user.states.include?(params[:state]) }
+    @users = User.all
+    if params[:search].present?
+      @users = @users.where("name ILIKE ?", "%#{params[:search]}%")
+    end
+    if params[:state].present?
+      @users = @users.select { |user| user.states.include?(params[:state]) }
+    end
+    @states = Property::US_STATES
   end
-  @states = Property::US_STATES
-end
+  
   def messages
     @conversation_partners = @user.conversation_partners
     @selected_user = params[:with_user_id] ? User.find(params[:with_user_id]) : @conversation_partners.first

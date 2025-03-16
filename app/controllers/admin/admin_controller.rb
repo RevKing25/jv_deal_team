@@ -1,10 +1,10 @@
-class Admin::AdminController < ApplicationController
+class Admin::AdminController < ApplicationController  
   before_action :require_admin
 
-  def dashboard
-    @users = User.all
-    @properties = Property.all
-  end
+ def dashboard
+  @users = User.all.page(params[:user_page]).per(10)
+  @properties = Property.all.page(params[:property_page]).per(10)
+end
 
   def destroy_user
     @user = User.find(params[:id])

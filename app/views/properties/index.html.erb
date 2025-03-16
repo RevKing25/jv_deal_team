@@ -2,19 +2,25 @@
   <div class="col-12">
     <h1 class="mb-4">Property Marketplace</h1>
   </div>
-    <!-- State Filter Dropdown -->
-    <div class="mb-4">
-      <%= form_with url: properties_path, method: :get, local: true, class: 'form-inline' do |form| %>
-        <div class="row align-items-center">
-          <div class="col-md-3">
-            <%= form.label :state, "Filter by State", class: 'form-label mr-2' %>
-            <%= form.select :state, options_for_select([["All States", ""]] + Property::US_STATES, params[:state]), {}, class: 'form-select', onchange: 'this.form.submit()' %>
-          </div>
+  <!-- State Filter Dropdown -->
+  <div class="mb-4">
+    <%= form_with url: properties_path, method: :get, local: true, class: 'form-inline' do |form| %>
+      <div class="row align-items-center">
+        <div class="col-md-3">
+          <%= form.label :state, "Filter by State", class: 'form-label mr-2' %>
+          <%= form.select :state, options_for_select([["All States", ""]] + Property::US_STATES, params[:state]), {}, class: 'form-select', onchange: 'this.form.submit()' %>
         </div>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
   </div>
-  <div class="row">
+</div>
+
+<div class="row">
+  <% if @properties.empty? %>
+    <div class="col-12">
+      <p>No active properties available.</p>
+    </div>
+  <% else %>
     <% @properties.each do |property| %>
       <div class="col-md-4 mb-3">
         <div class="card h-100">
@@ -56,5 +62,5 @@
         </div>
       </div>
     <% end %>
-  </div>
+  <% end %>
 </div>

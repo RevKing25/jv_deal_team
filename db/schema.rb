@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_15_100114) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_16_103514) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -52,6 +52,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_15_100114) do
     t.text "city"
     t.text "state"
     t.text "zip_code"
+    t.timestamptz "expiration_date", default: -> { "(CURRENT_TIMESTAMP + 'P30D'::interval)" }, null: false
     t.index ["user_id"], name: "idx_16509_index_properties_on_user_id"
   end
 

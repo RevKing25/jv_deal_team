@@ -1,4 +1,4 @@
-class AdminController < ApplicationController
+class Admin::AdminController < ApplicationController
   before_action :require_admin
 
   def dashboard

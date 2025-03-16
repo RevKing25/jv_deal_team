@@ -17,12 +17,14 @@
       <% @users.each do |user| %>
         <tr>
           <td><%= user.email %></td>
-          <td><%= user.name %></td>
+          <td><%= user.name || "N/A" %></td>
           <td><%= user.role %></td>
           <td><%= user.states_display %></td>
           <td><%= user.admin? ? "Yes" : "No" %></td>
           <td>
-            <%= link_to "Delete", admin_destroy_user_path(user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" unless user.admin? %>
+            <% unless user == current_user %>
+              <%= link_to "Delete", admin_destroy_user_path(user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+            <% end %>
           </td>
         </tr>
       <% end %>
@@ -45,7 +47,7 @@
         <tr>
           <td><%= property.title %></td>
           <td><%= number_to_currency(property.price) %></td>
-          <td><%= property.expiration_date.strftime("%B %d, %Y %I:%M %p") %></td>
+          <td><%= property.expiration_date.strftime("%B %d, %Y") %></td>
           <td><%= property.user.email %></td>
           <td>
             <%= link_to "Delete", admin_destroy_property_path(property), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>

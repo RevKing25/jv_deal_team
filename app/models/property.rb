@@ -7,6 +7,18 @@ class Property < ApplicationRecord
   validates :title, :description, :price, :street_address, :city, :state, :zip_code, presence: true
   validates :price, numericality: { greater_than_or_equal_to: 0 }
 
+  # Scopes for active and expired properties
+  scope :active, -> { where("expiration_date > ?", Time.current) }
+  scope :expired, -> { where("expiration_date <= ?", Time.current) }
+
+  # Instance method to check expiration
+  def expired?
+    expiration_date <= Time.current
+  end
+
+  def active?
+    !expired?
+  end
   # Assuming you have image handling (e.g., Active Storage or CarrierWave)
   # If using Active Storage:
   # has_many_attached :images

@@ -36,6 +36,7 @@
                     <span>
                       <%= link_to property.title, property %>
                       - <%= number_to_currency(property.price) %>
+                      - <%= property.expiration_date.strftime("%B %d, %Y") %>
                       - <%= [property.street_address, property.city, full_state_name(property.state), property.zip_code].join(', ') %>
                     </span>
                     <% if user_signed_in? && @user == current_user %>

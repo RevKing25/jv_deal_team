@@ -29,6 +29,7 @@
               <h2 class="card-title"><%= link_to property.title, property, class: "text-decoration-none" %></h2>
               <p class="card-text">Price: <%= number_to_currency(property.price) %></p>
               <p class="card-text">Address: <%= [property.street_address, property.city, full_state_name(property.state), property.zip_code].join(", ") %></p>
+              <p class="card-text">Expiration Date: <%= property.expiration_date.strftime("%B %d, %Y") %></p>
               <p class="card-text">Listed by: <%= property.user.name %></p>
               <% if user_signed_in? && property.user == current_user %>
                 <%= link_to "Edit", edit_property_path(property), class: "btn btn-outline-primary btn-sm" %>

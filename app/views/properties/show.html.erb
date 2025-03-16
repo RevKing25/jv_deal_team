@@ -5,6 +5,7 @@
         <% if can_view_full_property_details?(@property) %>
           <!-- Full details for owner or interested user -->
           <h1 class="card-title"><%= @property.title %></h1>
+          <p class="card-text"><strong>Exp Date:</strong> <%= @property.expiration_date.strftime("%B %d, %Y") %></p>
           <p class="card-text"><strong>Price:</strong> <%= number_to_currency(@property.price) %></p>
           <p class="card-text"><strong>Address:</strong> <%= [@property.street_address, @property.city, @property.state, @property.zip_code].join(', ') %></p>
           <p class="card-text"><strong>Description:</strong> <%= @property.description %></p>

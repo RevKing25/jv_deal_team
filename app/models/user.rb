@@ -5,6 +5,17 @@ class User < ApplicationRecord
   has_many :received_messages, class_name: 'Message', foreign_key: 'receiver_id'
   has_many :interests, dependent: :destroy
   has_many :interested_properties, through: :interests, source: :property
+  has_many :sent_connections, class_name: "Connection", foreign_key: "requester_id", dependent: :destroy
+  has_many :received_connections, class_name: "Connection", foreign_key: "receiver_id", dependent: :destroy
+
+  # Connected users (accepted connections)
+  has_many :sent_connections, class_name: "Connection", foreign_key: "requester_id", dependent: :destroy
+  has_many :received_connections, class_name: "Connection", foreign_key: "receiver_id", dependent: :destroy
+  has_many :connections_as_requester, -> { where(status: "accepted") }, class_name: "Connection", foreign_key: "requester_id"
+  has_many :connections_as_receiver, -> { where(status: "accepted") }, class_name: "Connection", foreign_key: "receiver_id"
+  has_many :connected_users, through: :connections_as_requester, source: :receiver
+  has_many :connectors, through: :connections_as_receiver, source: :requester
+
   validates :role, presence: true, inclusion: { in: %w(acquisitions dispo both), message: "must be 'Acquisitions', 'Dispo', or 'Both'" }
   validates :states, inclusion: { in: Property::US_STATES.map(&:last), message: "must be valid US state abbreviations" }, allow_blank: true
 
@@ -42,6 +53,17 @@ class User < ApplicationRecord
       "(sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)",
       self.id, other_user.id, other_user.id, self.id
     ).order(created_at: :asc)
+  end
+
+
+  
+  # Combine both directions for easier checking
+  def all_connected_users
+    User.where(id: connected_users.pluck(:id) + connectors.pluck(:id))
+  end
+
+  def connected_with?(other_user)
+    all_connected_users.include?(other_user)
   end
 
   private

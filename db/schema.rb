@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_16_103514) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_16_200131) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "connections", force: :cascade do |t|
+    t.bigint "requester_id", null: false
+    t.bigint "receiver_id", null: false
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["receiver_id"], name: "index_connections_on_receiver_id"
+    t.index ["requester_id", "receiver_id"], name: "index_connections_on_requester_id_and_receiver_id", unique: true
+    t.index ["requester_id"], name: "index_connections_on_requester_id"
+  end
 
   create_table "interests", force: :cascade do |t|
     t.bigint "user_id"
@@ -74,10 +85,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_16_103514) do
     t.index ["reset_password_token"], name: "idx_16522_index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "connections", "users", column: "receiver_id"
+  add_foreign_key "connections", "users", column: "requester_id"
   add_foreign_key "interests", "properties", name: "interests_property_id_fkey"
   add_foreign_key "interests", "users", name: "interests_user_id_fkey"
   add_foreign_key "messages", "messages", column: "parent_message_id", name: "messages_parent_message_id_fkey"
-  add_foreign_key "messages", "properties", name: "messages_property_id_fkey"
+  add_foreign_key "messages", "properties", on_delete: :nullify
   add_foreign_key "messages", "users", column: "receiver_id", name: "messages_receiver_id_fkey"
   add_foreign_key "messages", "users", column: "sender_id", name: "messages_sender_id_fkey"
   add_foreign_key "properties", "users", name: "properties_user_id_fkey"

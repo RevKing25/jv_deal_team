@@ -59,6 +59,7 @@
                     <%= message.sender.name %> | <%= message.created_at.in_time_zone.strftime("%B %d, %Y at %I:%M %p") %>
                   </small>
                   <%= message.content %>
+                   <p>Property: <%= message.property&.title || "Property Deleted" %></p>
                   <% if message.property %>
                     <br>
                     <small class="text-muted">

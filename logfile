@@ -78,3 +78,9 @@
 	        ELSE string_to_array(regexp_replace(states, '[[]"]', '', 'g'), ',')
 	      END;
 	
+2025-03-16 15:40:11.047 EDT [22617] ERROR:  update or delete on table "properties" violates foreign key constraint "messages_property_id_fkey" on table "messages"
+2025-03-16 15:40:11.047 EDT [22617] DETAIL:  Key (id)=(2) is still referenced from table "messages".
+2025-03-16 15:40:11.047 EDT [22617] STATEMENT:  DELETE FROM "properties" WHERE "properties"."id" = $1
+2025-03-16 15:46:32.761 EDT [23287] ERROR:  update or delete on table "messages" violates foreign key constraint "messages_parent_message_id_fkey" on table "messages"
+2025-03-16 15:46:32.761 EDT [23287] DETAIL:  Key (id)=(1) is still referenced from table "messages".
+2025-03-16 15:46:32.761 EDT [23287] STATEMENT:  DELETE FROM "messages" WHERE "messages"."id" = $1

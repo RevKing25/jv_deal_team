@@ -1,7 +1,7 @@
 <div class="container">
   <h1>All Users</h1>
 
-   <!-- Search and Filter Form -->
+  <!-- Search and Filter Form -->
   <div class="mb-4">
     <%= form_with url: users_path, method: :get, local: true, class: 'form-inline' do |form| %>
       <div class="row align-items-center">
@@ -18,6 +18,7 @@
         </div>
       </div>
     <% end %>
+  </div>
 
   <!-- Users List -->
   <% if @users.any? %>
@@ -25,9 +26,9 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Email</th>
+          <th>State</th>
           <th>Role</th>
-          <th>States</th>
+          <th>Email</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -35,10 +36,30 @@
         <% @users.each do |user| %>
           <tr>
             <td><%= user.name %></td>
-            <td><%= user.email %></td>
+            <td><%= full_state_name(user.state) || "N/A" %></td>
             <td><%= user.role&.capitalize || "N/A" %></td>
-            <td><%= user.states.join(", ").presence || "N/A" %></td><!-- Or property state if applicable -->
-            <td><%= link_to "View Profile", user_path(user), class: "btn btn-sm btn-outline-primary" %></td>
+            <td>
+              <% if user_signed_in? && (current_user == user || current_user.connected_with?(user)) %>
+                <%= user.email %>
+              <% else %>
+                <span class="text-muted">Connect to see email</span>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to "View Profile", user_path(user), class: "btn btn-sm btn-outline-primary" %>
+              <% if user_signed_in? && user != current_user %>
+                <% if current_user.connected_with?(user) %>
+                  <span class="badge bg-success ms-2">Connected</span>
+                <% elsif current_user.sent_connections.pending.find_by(receiver: user) %>
+                  <span class="badge bg-secondary ms-2">Pending</span>
+                <% elsif current_user.received_connections.pending.find_by(requester: user) %>
+                  <%= button_to "Accept", user_connection_path(user, current_user.received_connections.find_by(requester: user)), method: :patch, params: { status: "accepted" }, class: "btn btn-sm btn-success ms-2" %>
+                  <%= button_to "Reject", user_connection_path(user, current_user.received_connections.find_by(requester: user)), method: :patch, params: { status: "rejected" }, class: "btn btn-sm btn-danger ms-2" %>
+                <% else %>
+                  <%= button_to "Connect", user_connections_path(user), method: :post, class: "btn btn-sm btn-primary ms-2" %>
+                <% end %>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       </tbody>

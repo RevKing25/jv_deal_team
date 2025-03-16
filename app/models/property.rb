@@ -1,6 +1,6 @@
 class Property < ApplicationRecord
   belongs_to :user
-  has_many :messages
+  has_many :messages, dependent: :nullify
   has_many :interests, dependent: :destroy
   has_many :interested_users, through: :interests, source: :user
 

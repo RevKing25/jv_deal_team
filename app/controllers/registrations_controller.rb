@@ -28,6 +28,6 @@ class RegistrationsController < Devise::RegistrationsController
   def configure_permitted_parameters
     Rails.logger.debug "Configuring permitted parameters"
     devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :name, :profile_photo])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:email, :name, :profile_photo, :password, :password_confirmation, :current_password])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:state, :email, :name, :profile_photo, :password, :password_confirmation, :current_password])
   end
 end

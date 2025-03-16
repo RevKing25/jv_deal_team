@@ -4,6 +4,11 @@ module ApplicationHelper
     property.user == current_user || current_user.interested_properties.include?(property)
   end
 
+  def can_view_full_profile?(user)
+    user_signed_in? && (current_user == user || current_user.connected_with?(user))
+  end
+
+
   def render_property_preview(property)
     content_tag(:div, class: "property-preview") do
       if property.images.any?

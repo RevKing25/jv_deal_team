@@ -5,23 +5,62 @@
         <!-- Profile Details -->
         <h1 class="card-title mb-4"><%= @user.name %>'s Profile</h1>
         <div class="mb-3 text-center">
-        <% if @user.profile_photo.present? %>
-  <%= image_tag @user.profile_photo.url, class: 'img-thumbnail rounded-circle mb-3', alt: "#{@user.name}'s profile photo" %>
-<% else %>
-  <%= image_tag @user.profile_photo.default_url, class: 'img-thumbnail rounded-circle mb-3', alt: "Default profile photo" %>
-<% end %>
+          <% if @user.profile_photo.present? %>
+            <%= image_tag @user.profile_photo.url, class: 'img-thumbnail rounded-circle mb-3', alt: "#{@user.name}'s profile photo" %>
+          <% else %>
+            <%= image_tag @user.profile_photo.default_url, class: 'img-thumbnail rounded-circle mb-3', alt: "Default profile photo" %>
+          <% end %>
           <div>
             <% if user_signed_in? && @user == current_user %>
               <%= link_to 'Edit Picture', edit_user_registration_path, class: 'btn btn-outline-primary btn-sm' %>
             <% end %>
           </div>
         </div>
+
+        <!-- Always visible information -->
         <p class="card-text"><strong>Name:</strong> <%= @user.name %></p>
-        <p class="card-text"><strong>Email:</strong> <%= @user.email %></p>
-        
+        <p class="card-text"><strong>State:</strong> <%= full_state_name(@user.state) %></p>
+
+        <!-- Restricted information -->
+        <% if can_view_full_profile?(@user) %>
+          <p class="card-text"><strong>Email:</strong> <%= @user.email %></p>
+        <% end %>
+
+        <!-- Connection Logic (for connecting with others) -->
+        <% if user_signed_in? && @user != current_user %>
+          <% if current_user.connected_with?(@user) %>
+            <p class="text-success">You are connected!</p>
+          <% elsif current_user.sent_connections.pending.find_by(receiver: @user) %>
+            <p class="text-muted">Connection request pending...</p>
+          <% elsif current_user.received_connections.pending.find_by(requester: @user) %>
+            <div class="mt-2">
+              <%= button_to "Accept", user_connection_path(@user, current_user.received_connections.find_by(requester: @user)), method: :patch, params: { status: "accepted" }, class: "btn btn-success btn-sm me-2" %>
+              <%= button_to "Reject", user_connection_path(@user, current_user.received_connections.find_by(requester: @user)), method: :patch, params: { status: "rejected" }, class: "btn btn-danger btn-sm" %>
+            </div>
+          <% else %>
+            <%= button_to "Connect", user_connections_path(@user), method: :post, class: "btn btn-primary btn-sm mt-2" %>
+          <% end %>
+        <% end %>
+
+        <!-- Pending Connection Requests (for self only) -->
+        <% if user_signed_in? && @user == current_user && @pending_connections.any? %>
+          <h2 class="mt-4">Pending Connection Requests</h2>
+          <ul class="list-group mb-4">
+            <% @pending_connections.each do |connection| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= connection.requester.name %> from <%= full_state_name(connection.requester.state) %> wants to connect</span>
+                <div>
+                  <%= button_to "Accept", user_connection_path(@user, connection), method: :patch, params: { status: "accepted" }, class: "btn btn-success btn-sm me-2" %>
+                  <%= button_to "Reject", user_connection_path(@user, connection), method: :patch, params: { status: "rejected" }, class: "btn btn-danger btn-sm" %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+
         <!-- Add Edit Profile Button -->
         <% if user_signed_in? && @user == current_user %>
-          <%= link_to 'Edit Profile', edit_user_registration_path, class: 'btn btn-primary mb-4' %>
+          <%= link_to 'Edit Profile', edit_user_registration_path, class: 'btn btn-primary mb-4 mt-3' %>
         <% end %>
 
         <!-- Listed Properties -->
@@ -31,7 +70,6 @@
             <% @properties.each do |property| %>
               <li class="list-group-item">
                 <% if can_view_full_property_details?(property) %>
-                  <!-- Full details for owner or interested user -->
                   <div class="d-flex justify-content-between align-items-center">
                     <span>
                       <%= link_to property.title, property %>
@@ -41,7 +79,7 @@
                     </span>
                     <% if user_signed_in? && @user == current_user %>
                       <%= link_to 'Edit', edit_property_path(property), class: 'btn btn-outline-primary btn-sm me-2' %>
-                      <%= link_to 'Delete', user_property_path(property), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+                      <%= link_to 'Delete', property_path(property), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
                     <% end %>
                   </div>
                   <% if property.images.any? %>
@@ -55,7 +93,6 @@
                     </div>
                   <% end %>
                 <% else %>
-                  <!-- Limited details for others -->
                   <%= render_property_preview(property) %>
                   <% if user_signed_in? && @user != current_user %>
                     <% unless current_user.interested_properties.include?(property) %>

@@ -10,6 +10,9 @@ class UsersController < ApplicationController
     # Sent messages (top-level only) to show conversations initiated by the user
     @sent_messages_with_replies = @user.sent_messages.where(parent_message_id: nil).order(created_at: :desc)
 
+        # Load pending received connections if viewing own profile
+    @pending_connections = @user == current_user ? current_user.received_connections.pending : []
+    
     # Mark messages as read if viewing own profile
     if user_signed_in? && @user == current_user
       @messages_with_replies.where(read: false).each(&:mark_as_read)
@@ -17,17 +20,17 @@ class UsersController < ApplicationController
   end
 
   
-def index
+  def index
     @users = User.all
     if params[:search].present?
       @users = @users.where("name ILIKE ?", "%#{params[:search]}%")
     end
     if params[:state].present?
-      @users = @users.select { |user| user.states.include?(params[:state]) }
+      @users = @users.where(state: params[:state])  # Filter by single state column
     end
-    @states = Property::US_STATES
+    @states = Property::US_STATES  # For the filter dropdown
   end
-  
+
   def messages
     @conversation_partners = @user.conversation_partners
     @selected_user = params[:with_user_id] ? User.find(params[:with_user_id]) : @conversation_partners.first

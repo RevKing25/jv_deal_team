@@ -30,6 +30,14 @@
       <% end %>
     </tbody>
   </table>
+  <!-- Pagination for Users -->
+  <div class="d-flex justify-content-center mt-3">
+    <nav aria-label="User pagination">
+      <ul class="pagination">
+        <%= paginate @users, param_name: :user_page, outer_window: 0, window: 1 %>
+      </ul>
+    </nav>
+  </div>
 
   <h2>Properties</h2>
   <table class="table table-striped">
@@ -56,4 +64,12 @@
       <% end %>
     </tbody>
   </table>
+  <!-- Pagination for Properties -->
+  <div class="d-flex justify-content-center mt-3">
+    <nav aria-label="Property pagination">
+      <ul class="pagination">
+        <%= paginate @properties, param_name: :property_page, outer_window: 0, window: 1 %>
+      </ul>
+    </nav>
+  </div>
 </div>

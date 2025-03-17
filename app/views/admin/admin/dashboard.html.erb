@@ -19,7 +19,7 @@
           <td><%= user.email %></td>
           <td><%= user.name || "N/A" %></td>
           <td><%= user.role %></td>
-          <td><%= user.states_display %></td>
+          <td><%= user.states.join(", ") || "N/A" %></td>
           <td><%= user.admin? ? "Yes" : "No" %></td>
           <td>
             <% unless user == current_user %>

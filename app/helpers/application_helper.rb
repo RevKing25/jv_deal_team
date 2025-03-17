@@ -20,9 +20,13 @@ module ApplicationHelper
     end
   end
 
-  def full_state_name(abbreviation)
-    return unless abbreviation.present?
-    state_pair = Property::US_STATES.find { |name, abbr| abbr == abbreviation }
-    state_pair ? state_pair[0] : abbreviation
+  #def full_state_name(abbreviation)
+    #return unless abbreviation.present?
+    #state_pair = Property::US_STATES.find { |name, abbr| abbr == abbreviation }
+    #state_pair ? state_pair[0] : abbreviation
+  #end
+
+  def full_state_name(state_code)
+    Property::US_STATES.find { |state| state[1] == state_code }&.last || state_code || "N/A"
   end
 end

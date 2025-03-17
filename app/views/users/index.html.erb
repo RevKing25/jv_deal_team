@@ -45,19 +45,23 @@
                 <span class="text-muted">Connect to see email</span>
               <% end %>
             </td>
-            <td>
-              <%= link_to "View Profile", user_path(user), class: "btn btn-sm btn-outline-primary" %>
-              <% if user_signed_in? && user != current_user %>
-                <% if current_user.connected_with?(user) %>
+             <td>
+              <% if user_signed_in? %>
+                <% if user == current_user %>
+                  <%= link_to "View Profile", user_path(user), class: "btn btn-sm btn-outline-primary" %>
+                <% elsif current_user.connected_with?(user) %>
+                  <%= link_to "View Profile", user_path(user), class: "btn btn-sm btn-outline-primary" %>
                   <span class="badge bg-success ms-2">Connected</span>
                 <% elsif current_user.sent_connections.pending.find_by(receiver: user) %>
-                  <span class="badge bg-secondary ms-2">Pending</span>
+                  <span class="badge bg-secondary">Pending</span>
                 <% elsif current_user.received_connections.pending.find_by(requester: user) %>
-                  <%= button_to "Accept", user_connection_path(user, current_user.received_connections.find_by(requester: user)), method: :patch, params: { status: "accepted" }, class: "btn btn-sm btn-success ms-2" %>
+                  <%= button_to "Accept", user_connection_path(user, current_user.received_connections.find_by(requester: user)), method: :patch, params: { status: "accepted" }, class: "btn btn-sm btn-success" %>
                   <%= button_to "Reject", user_connection_path(user, current_user.received_connections.find_by(requester: user)), method: :patch, params: { status: "rejected" }, class: "btn btn-sm btn-danger ms-2" %>
                 <% else %>
-                  <%= button_to "Connect", user_connections_path(user), method: :post, class: "btn btn-sm btn-primary ms-2" %>
+                  <%= button_to "Connect", user_connections_path(user), method: :post, class: "btn btn-sm btn-primary" %>
                 <% end %>
+              <% else %>
+                <span class="text-muted">Sign in to connect</span>
               <% end %>
             </td>
           </tr>

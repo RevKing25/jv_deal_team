@@ -1,19 +1,26 @@
 class PropertiesController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :set_property, only: [:show, :edit, :update, :destroy_image]
+  before_action :set_property, only: [:show, :edit, :update, :destroy_image, :create_message]  # Add :create_message
   before_action :authorize_user, only: [:edit, :update, :destroy_image]
 
-    def index
-  @properties = Property.active
-  if params[:state].present? && Property::US_STATES.map(&:last).include?(params[:state])
-    @properties = @properties.where(state: params[:state])
+  def index
+    @properties = Property.active
+    if params[:state].present? && Property::US_STATES.map(&:last).include?(params[:state])
+      @properties = @properties.where(state: params[:state])
+    end
   end
-end
 
   def show
     # Allow owner to see expired property, others see only active
     unless @property.active? || (user_signed_in? && @property.user == current_user)
       redirect_to properties_path, alert: "That property is no longer available."
+    else
+      # Set up messaging form for interested or connected users
+      if user_signed_in? && @property.user != current_user
+        @interested = current_user.interested_properties.include?(@property)
+        @connected = current_user.connected_with?(@property.user)
+        @message = Message.new if @interested || @connected
+      end
     end
   end
 
@@ -31,6 +38,19 @@ end
   end
 
   def edit
+  end
+
+  def create_message
+    if current_user.interested_properties.include?(@property) || current_user.connected_with?(@property.user)
+      @message = Message.new(message_params.merge(sender: current_user, receiver: @property.user, property: @property))
+      if @message.save
+        redirect_to @property, notice: "Message sent!"
+      else
+        render :show, status: :unprocessable_entity, alert: "Failed to send message: #{@message.errors.full_messages.join(', ')}"
+      end
+    else
+      redirect_to @property, alert: "You must express interest or be connected to message this user."
+    end
   end
 
   def update
@@ -70,5 +90,9 @@ end
 
   def property_params
     params.require(:property).permit(:title, :description, :price, :street_address, :city, :state, :remove_contract_file, :zip_code, :contract_file, :expiration_date, images: [])
+  end
+
+  def message_params
+    params.require(:message).permit(:content)
   end
 end

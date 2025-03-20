@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
-
   get 'static_pages/about'
   devise_for :users, controllers: { registrations: 'users/registrations' }
 
   resources :properties, only: [:index, :new, :create, :show, :edit, :update] do
     member do
       delete 'destroy_image/:image_index', to: 'properties#destroy_image', as: 'destroy_image'
+      post 'create_message', to: 'properties#create_message', as: 'create_message'  # Added this line
     end
   end
 
@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   resources :interests, only: [:create]
 
-  resources :users, only: [:show, :index] do  # No standard actions
+  resources :users, only: [:show, :index] do
     get 'profile', to: 'users#show', on: :member, as: :profile
     get 'messages', to: 'users#messages', on: :member, as: :messages
     resources :connections, only: [:create, :update]

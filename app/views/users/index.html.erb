@@ -13,6 +13,10 @@
           <%= form.label :state, "Filter by State", class: 'form-label mr-2' %>
           <%= form.select :state, options_for_select([["All States", ""]] + Property::US_STATES, params[:state]), {}, class: 'form-select' %>
         </div>
+         <div class="col-md-3">
+          <%= form.label :role, "Filter by Role", class: 'form-label mr-2' %>
+        <%= form.select :role, options_for_select(["acquisitions", "dispo", "both"], params[:role]), { include_blank: "All Roles" }, class: 'form-select' %>
+        </div>
         <div class="col-md-2">
           <%= form.submit "Search", class: "btn btn-primary mt-3" %>
         </div>

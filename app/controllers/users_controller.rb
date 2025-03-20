@@ -21,15 +21,12 @@ class UsersController < ApplicationController
 
   
   def index
-    @users = User.all
-    if params[:search].present?
-      @users = @users.where("name ILIKE ?", "%#{params[:search]}%")
-    end
-    if params[:state].present?
-      @users = @users.where(state: params[:state])  # Filter by single state column
-    end
-    @states = Property::US_STATES  # For the filter dropdown
-  end
+  @users = User.all
+  @users = @users.where("name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
+  @users = @users.where(state: params[:state]) if params[:state].present?
+  @users = @users.where(role: params[:role]) if params[:role].present?
+  @users = @users.where("states && ARRAY[?]::varchar[]", params[:states]) if params[:states].present?
+end
 
   def messages
     @conversation_partners = @user.conversation_partners

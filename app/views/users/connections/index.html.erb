@@ -1,0 +1,66 @@
+<!-- app/views/connections/index.html.erb -->
+<div class="container mt-4">
+  <h1 class="mb-4">Connections</h1>
+
+  <!-- Pending Connections Section -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2 class="h4 mb-0">Pending Connection Requests (<%= @pending_connections.count %>)</h2>
+    </div>
+    <div class="card-body">
+      <% if @pending_connections.any? %>
+        <ul class="list-group list-group-flush">
+          <% @pending_connections.each do |connection| %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <% if connection.requester.profile_photo.present? %>
+                  <%= image_tag connection.requester.profile_photo.thumb.url, class: "rounded-circle me-3", style: "width: 50px; height: 50px;" %>
+                <% else %>
+                  <%= image_tag connection.requester.profile_photo.default_url, class: "rounded-circle me-3", style: "width: 50px; height: 50px;" %>
+                <% end %>
+                <div>
+                  <%= link_to connection.requester.name, user_path(connection.requester), class: "text-decoration-none" %>
+                  <small class="d-block text-muted"><%= full_state_name(connection.requester.state) %></small>
+                </div>
+              </div>
+              <div>
+                <%= button_to "Accept", user_connection_path(current_user, connection), method: :patch, params: { connection: { status: "accepted" } }, class: "btn btn-success btn-sm me-2" %>
+                <%= button_to "Reject", user_connection_path(current_user, connection), method: :patch, params: { connection: { status: "rejected" } }, class: "btn btn-danger btn-sm" %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-muted">No pending connection requests.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Current Connections Section -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="h4 mb-0">Current Connections (<%= @current_connections.count %>)</h2>
+    </div>
+    <div class="card-body">
+      <% if @current_connections.any? %>
+        <ul class="list-group list-group-flush">
+          <% @current_connections.each do |user| %>
+            <li class="list-group-item d-flex align-items-center">
+              <% if user.profile_photo.present? %>
+                <%= image_tag user.profile_photo.thumb.url, class: "rounded-circle me-3", style: "width: 50px; height: 50px;" %>
+              <% else %>
+                <%= image_tag user.profile_photo.default_url, class: "rounded-circle me-3", style: "width: 50px; height: 50px;" %>
+              <% end %>
+              <div>
+                <%= link_to user.name, user_path(user), class: "text-decoration-none" %>
+                <small class="d-block text-muted"><%= full_state_name(user.state) %></small>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-muted">You have no current connections.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

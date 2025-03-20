@@ -40,6 +40,20 @@
           <% else %>
             <%= button_to "Connect", user_connections_path(@user), method: :post, class: "btn btn-primary btn-sm mt-2" %>
           <% end %>
+
+          <!-- Messaging Form for Connected Users -->
+          <% if current_user.connected_with?(@user) %>
+            <h3 class="mt-4">Message <%= @user.name %></h3>
+            <%= form_with model: @message || Message.new, url: create_message_user_path(@user), local: true, class: "mb-4" do |form| %>
+              <%= form.text_area :content, class: "form-control mb-2", rows: 3, placeholder: "Type your message..." %>
+              <%= form.submit "Send Message", class: "btn btn-primary" %>
+              <% if @message&.errors&.any? %>
+                <div class="alert alert-danger mt-2">
+                  <%= @message.errors.full_messages.join(", ") %>
+                </div>
+              <% end %>
+            <% end %>
+          <% end %>
         <% end %>
 
         <!-- Pending Connection Requests (for self only) -->

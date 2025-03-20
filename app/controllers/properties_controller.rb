@@ -40,19 +40,20 @@ class PropertiesController < ApplicationController
   def edit
   end
 
-  def create_message
+    def create_message
+    Rails.logger.info "Create message attempt from property: sender=#{current_user.id}, receiver=#{@property.user.id}, property=#{@property.id}"
     if current_user.interested_properties.include?(@property) || current_user.connected_with?(@property.user)
       @message = Message.new(message_params.merge(sender: current_user, receiver: @property.user, property: @property))
       if @message.save
         redirect_to @property, notice: "Message sent!"
       else
-        render :show, status: :unprocessable_entity, alert: "Failed to send message: #{@message.errors.full_messages.join(', ')}"
+        render :show, status: :unprocessable_entity
       end
     else
       redirect_to @property, alert: "You must express interest or be connected to message this user."
     end
   end
-
+  
   def update
     if params[:property][:images].present?
       # Append new images to existing ones

@@ -20,7 +20,8 @@ Rails.application.routes.draw do
   resources :users, only: [:show, :index] do
     get 'profile', to: 'users#show', on: :member, as: :profile
     get 'messages', to: 'users#messages', on: :member, as: :messages
-    resources :connections, only: [:create, :update]
+    post 'create_message', to: 'users#create_message', on: :member, as: 'create_message'  # Added this line
+  resources :connections, only: [:create, :update]
   end
 
   delete '/profile/properties/:id', to: 'users#destroy', as: 'user_property'

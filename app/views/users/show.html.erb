@@ -8,7 +8,7 @@
           <% if @user.profile_photo.present? %>
             <%= image_tag @user.profile_photo.url, class: 'img-thumbnail rounded-circle mb-3', alt: "#{@user.name}'s profile photo" %>
           <% else %>
-            <%= image_tag @user.profile_photo.default_url, class: 'img-thumbnail rounded-circle mb-3', alt: "Default profile photo" %>
+            <%= image_tag "default_profile_photo.jpg", class: 'img-thumbnail rounded-circle mb-3', alt: "Default profile photo" %>
           <% end %>
           <div>
             <% if user_signed_in? && @user == current_user %>
@@ -34,8 +34,8 @@
             <p class="text-muted">Connection request pending...</p>
           <% elsif current_user.received_connections.pending.find_by(requester: @user) %>
             <div class="mt-2">
-              <%= button_to "Accept", user_connection_path(@user, current_user.received_connections.find_by(requester: @user)), method: :patch, params: { status: "accepted" }, class: "btn btn-success btn-sm me-2" %>
-              <%= button_to "Reject", user_connection_path(@user, current_user.received_connections.find_by(requester: @user)), method: :patch, params: { status: "rejected" }, class: "btn btn-danger btn-sm" %>
+              <%= button_to "Accept", user_connection_path(@user, current_user.received_connections.find_by(requester: @user)), method: :patch, params: { connection: { status: "accepted" } }, class: "btn btn-success btn-sm me-2" %>
+              <%= button_to "Reject", user_connection_path(@user, current_user.received_connections.find_by(requester: @user)), method: :patch, params: { connection: { status: "rejected" } }, class: "btn btn-danger btn-sm" %>
             </div>
           <% else %>
             <%= button_to "Connect", user_connections_path(@user), method: :post, class: "btn btn-primary btn-sm mt-2" %>
@@ -64,8 +64,8 @@
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span><%= connection.requester.name %> from <%= full_state_name(connection.requester.state) %> wants to connect</span>
                 <div>
-                  <%= button_to "Accept", user_connection_path(@user, connection), method: :patch, params: { status: "accepted" }, class: "btn btn-success btn-sm me-2" %>
-                  <%= button_to "Reject", user_connection_path(@user, connection), method: :patch, params: { status: "rejected" }, class: "btn btn-danger btn-sm" %>
+                  <%= button_to "Accept", user_connection_path(@user, connection), method: :patch, params: { connection: { status: "accepted" } }, class: "btn btn-success btn-sm me-2" %>
+                  <%= button_to "Reject", user_connection_path(@user, connection), method: :patch, params: { connection: { status: "rejected" } }, class: "btn btn-danger btn-sm" %>
                 </div>
               </li>
             <% end %>

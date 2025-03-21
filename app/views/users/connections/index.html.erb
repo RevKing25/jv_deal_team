@@ -1,4 +1,4 @@
-<!-- app/views/connections/index.html.erb -->
+<!-- app/views/users/connections/index.html.erb -->
 <div class="container mt-4">
   <h1 class="mb-4">Connections</h1>
 
@@ -16,16 +16,22 @@
                 <% if connection.requester.profile_photo.present? %>
                   <%= image_tag connection.requester.profile_photo.thumb.url, class: "rounded-circle me-3", style: "width: 50px; height: 50px;" %>
                 <% else %>
-                  <%= image_tag connection.requester.profile_photo.default_url, class: "rounded-circle me-3", style: "width: 50px; height: 50px;" %>
+                  <%= image_tag "default_profile_photo.jpg", class: "rounded-circle me-3", style: "width: 50px; height: 50px;" %>
                 <% end %>
                 <div>
                   <%= link_to connection.requester.name, user_path(connection.requester), class: "text-decoration-none" %>
-                  <small class="d-block text-muted"><%= full_state_name(connection.requester.state) %></small>
+                  <small class="d-block text-muted"><%= connection.requester.state %></small>
                 </div>
               </div>
               <div>
-                <%= button_to "Accept", user_connection_path(current_user, connection), method: :patch, params: { connection: { status: "accepted" } }, class: "btn btn-success btn-sm me-2" %>
-                <%= button_to "Reject", user_connection_path(current_user, connection), method: :patch, params: { connection: { status: "rejected" } }, class: "btn btn-danger btn-sm" %>
+                <%= form_with model: connection, url: user_connection_path(current_user, connection), method: :patch, local: true do |form| %>
+                  <%= form.hidden_field :status, value: "accepted" %>
+                  <%= form.submit "Accept", class: "btn btn-success btn-sm me-2" %>
+                <% end %>
+                <%= form_with model: connection, url: user_connection_path(current_user, connection), method: :patch, local: true do |form| %>
+                  <%= form.hidden_field :status, value: "rejected" %>
+                  <%= form.submit "Reject", class: "btn btn-danger btn-sm" %>
+                <% end %>
               </div>
             </li>
           <% end %>
@@ -49,11 +55,11 @@
               <% if user.profile_photo.present? %>
                 <%= image_tag user.profile_photo.thumb.url, class: "rounded-circle me-3", style: "width: 50px; height: 50px;" %>
               <% else %>
-                <%= image_tag user.profile_photo.default_url, class: "rounded-circle me-3", style: "width: 50px; height: 50px;" %>
+                <%= image_tag "default_profile_photo.jpg", class: "rounded-circle me-3", style: "width: 50px; height: 50px;" %>
               <% end %>
               <div>
                 <%= link_to user.name, user_path(user), class: "text-decoration-none" %>
-                <small class="d-block text-muted"><%= full_state_name(user.state) %></small>
+                <small class="d-block text-muted"><%= user.state %></small>
               </div>
             </li>
           <% end %>

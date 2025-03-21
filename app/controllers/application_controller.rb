@@ -22,4 +22,10 @@
   def after_sign_out_path_for(resource)
     root_path
   end
+
+  private
+
+  def refresh_current_user
+    warden.set_user(current_user.reload) if user_signed_in?
+  end
   end

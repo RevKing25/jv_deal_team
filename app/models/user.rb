@@ -21,6 +21,8 @@ class User < ApplicationRecord
 
   attribute :states, :string, array: true, default: -> { [] }
 
+
+
   def states_display
     states.map { |abbr| Property::US_STATES.find { |s| s[1] == abbr }&.first || abbr }.join(", ")
   end

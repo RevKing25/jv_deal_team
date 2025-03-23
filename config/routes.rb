@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'dashboard/index'
   get 'static_pages/about'
   devise_for :users, controllers: { registrations: 'users/registrations' }
 
@@ -16,6 +17,8 @@ Rails.application.routes.draw do
   end
 
   resources :interests, only: [:create]
+
+  get '/dashboard', to: 'dashboard#index', as: 'dashboard'
 
   resources :users, only: [:show, :index] do
   get 'profile', to: 'users#show', on: :member, as: :profile

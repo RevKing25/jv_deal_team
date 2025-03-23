@@ -19,6 +19,10 @@ class Property < ApplicationRecord
   def active?
     !expired?
   end
+
+  def address
+    [street_address, city, state, zip_code].compact.join(', ')
+  end
   # Assuming you have image handling (e.g., Active Storage or CarrierWave)
   # If using Active Storage:
   # has_many_attached :images

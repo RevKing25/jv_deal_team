@@ -4,6 +4,8 @@ class Connection < ApplicationRecord
 
   enum status: { pending: 0, accepted: 1, rejected: 2 }
 
+  scope :pending, -> { where(status: 0) }
+
   validates :requester_id, uniqueness: { scope: :receiver_id, message: "already requested to connect" }
   validate :not_self_connection
 
@@ -22,24 +24,28 @@ class Connection < ApplicationRecord
     Rails.logger.info "New pending connection created, incremented #{receiver.id}'s count to #{receiver.pending_connections_count}"
   end
 
-  ddef update_pending_connections_count
-  if saved_change_to_status?
-    old_status, new_status = saved_changes[:status]
-    Rails.logger.info "Connection #{id} status changed from #{self.statuses.key(old_status)} (#{old_status}) to #{self.statuses.key(new_status)} (#{new_status})"
-    if new_status == 0 && old_status != 0  # Became pending
-      receiver.increment!(:pending_connections_count)
-      Rails.logger.info "Incremented #{receiver.id}'s count to #{receiver.pending_connections_count}"
-    elsif old_status == 0 && new_status != 0  # Left pending
-      receiver.decrement!(:pending_connections_count)
-      Rails.logger.info "Decremented #{receiver.id}'s count to #{receiver.pending_connections_count}"
+  def update_pending_connections_count
+    if saved_change_to_status?
+      old_status = status_before_last_save
+      new_status = status
+      Rails.logger.info "DEBUG: old_status=#{old_status}, new_status=#{new_status}"
+      Rails.logger.info "Connection #{id} status changed from #{old_status} to #{new_status}"
+      if new_status == "pending" && old_status != "pending"
+        Rails.logger.info "Incrementing count for #{receiver.id}"
+        receiver.increment!(:pending_connections_count)
+        Rails.logger.info "Incremented #{receiver.id}'s count to #{receiver.pending_connections_count}"
+      elsif old_status == "pending" && new_status != "pending"
+        Rails.logger.info "Decrementing count for #{receiver.id}"
+        receiver.decrement!(:pending_connections_count)
+        Rails.logger.info "Decremented #{receiver.id}'s count to #{receiver.pending_connections_count}"
+      end
+    else
+      Rails.logger.info "No status change for Connection #{id}"
     end
-  else
-    Rails.logger.info "No status change for Connection #{id}"
   end
-end
 
   def decrement_pending_connections_count
-    if status == "pending"
+    if pending?
       receiver.decrement!(:pending_connections_count)
       Rails.logger.info "Destroyed pending connection, decremented #{receiver.id}'s count to #{receiver.pending_connections_count}"
     end

@@ -46,6 +46,9 @@ class UsersController < ApplicationController
     if params[:state].present?
       @users = @users.where(state: params[:state])
     end
+    if params[:role].present?
+      @users = @users.where(role: params[:role])
+    end
     @states = Property::US_STATES
   end
 

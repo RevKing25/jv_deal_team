@@ -3,26 +3,26 @@
 
   <!-- Search and Filter Form -->
   <div class="mb-4">
-    <%= form_with url: users_path, method: :get, local: true, class: 'form-inline' do |form| %>
-      <div class="row align-items-center">
-        <div class="col-md-4">
-          <%= form.label :search, "Search by Name", class: 'form-label mr-2' %>
-          <%= form.text_field :search, value: params[:search], class: 'form-control', placeholder: "Enter name..." %>
-        </div>
-        <div class="col-md-3">
-          <%= form.label :state, "Filter by State", class: 'form-label mr-2' %>
-          <%= form.select :state, options_for_select([["All States", ""]] + Property::US_STATES, params[:state]), {}, class: 'form-select' %>
-        </div>
-         <div class="col-md-3">
-          <%= form.label :role, "Filter by Role", class: 'form-label mr-2' %>
-        <%= form.select :role, options_for_select(["acquisitions", "dispo", "both"], params[:role]), { include_blank: "All Roles" }, class: 'form-select' %>
-        </div>
-        <div class="col-md-2">
-          <%= form.submit "Search", class: "btn btn-primary mt-3" %>
-        </div>
+  <%= form_with url: users_path, method: :get, local: true, class: 'form-inline' do |form| %>
+    <div class="row align-items-center">
+      <div class="col-md-4">
+        <%= form.label :search, "Search by Name", class: 'form-label mr-2' %>
+        <%= form.text_field :search, value: params[:search], class: 'form-control', placeholder: "Enter name..." %>
       </div>
-    <% end %>
-  </div>
+      <div class="col-md-3">
+        <%= form.label :state, "Filter by State", class: 'form-label mr-2' %>
+        <%= form.select :state, options_for_select([["All States", ""]] + Property::US_STATES, params[:state].presence), {}, class: 'form-select' %>
+      </div>
+      <div class="col-md-3">
+        <%= form.label :role, "Filter by Role", class: 'form-label mr-2' %>
+        <%= form.select :role, options_for_select([["All Roles", ""], ["Acquisitions", "acquisitions"], ["Dispo", "dispo"], ["Both", "both"]], params[:role].presence), {}, class: 'form-select' %>
+      </div>
+      <div class="col-md-2">
+        <%= form.submit "Search", class: "btn btn-primary mt-3" %>
+      </div>
+    </div>
+  <% end %>
+</div>
 
   <!-- Users List -->
   <% if @users.any? %>

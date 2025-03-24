@@ -22,6 +22,22 @@ class UsersController < ApplicationController
     end
   end
 
+  def edit
+    # @user is set by set_user; renders edit.html.erb by default
+  end
+
+  def update
+    Rails.logger.info "Update params: #{params.inspect}"
+    if @user.update(user_params)
+      Rails.logger.info "User updated successfully: #{@user.profile_picture}"
+      redirect_to user_path(@user), notice: "Profile updated successfully."
+    else
+      Rails.logger.info "Update failed: #{@user.errors.full_messages}"
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+
   def index
     @users = User.all
     if params[:search].present?

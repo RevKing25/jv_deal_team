@@ -1,0 +1,29 @@
+<!-- app/views/users/edit.html.erb -->
+<h1>Edit Your Profile</h1>
+
+<%= form_with(model: @user, local: true, html: { multipart: true }) do |f| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this profile from being saved:</h2>
+      <ul>
+        <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :profile_picture, "Profile Picture" %>
+    <%= f.file_field :profile_picture %>
+    <% if @user.profile_picture.present? %>
+      <p>Current Picture: <%= image_tag @user.profile_picture.url, size: "100x100" %></p>
+    <% end %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Update Profile" %>
+  </div>
+<% end %>
+
+<%= link_to "Back", user_path(@user) %>

@@ -20,7 +20,7 @@ Rails.application.routes.draw do
 
   get '/dashboard', to: 'dashboard#index', as: 'dashboard'
 
-  resources :users, only: [:show, :index] do
+  resources :users, only: [:show, :index, :edit, :update] do
   get 'profile', to: 'users#show', on: :member, as: :profile
   get 'messages', to: 'users#messages', on: :member, as: :messages
   post 'create_message', to: 'users#create_message', on: :member, as: 'create_message'

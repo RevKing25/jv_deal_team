@@ -13,11 +13,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
   private
 
   def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :role, { states: [] }])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name,:profile_photo, :role, { states: [] }])
   end
 
   def configure_account_update_params
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :role, { states: [] }])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name,:profile_photo, :role, { states: [] }])
   end
 end
   # GET /resource/sign_up

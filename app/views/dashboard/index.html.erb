@@ -1,25 +1,32 @@
-<!-- app/views/dashboard/index.html.erb -->
-<h1>My Interested Properties</h1>
+<div class="container mt-4">
+  <h1 class="mb-4">My Interested Properties</h1>
 
-<% if @interested_properties.any? %>
-  <div class="row">
-    <% @interested_properties.each do |property| %>
-      <div class="col-md-4 mb-4">
-        <div class="card h-100">
-          <% if property.images.any? %>
-  			<%= image_tag property.images.first.url, class: "card-img-top", alt: "Property image" %>
-			<% else %>
- 			 <img src="https://via.placeholder.com/300x200" class="card-img-top", alt="No image available">
-			<% end %>
-          <div class="card-body">
-            <h5 class="card-title"><%= property.address %></h5>
-            <p class="card-text">Price: <%= number_to_currency(property.price) %></p>
-            <%= link_to 'View Details', property_path(property), class: 'btn btn-primary' %>
+  <% if @interested_properties.any? %>
+    <div class="row">
+      <% @interested_properties.each do |property| %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <% if property.images.any? %>
+              <%= image_tag property.images.first.url, class: "card-img-top", alt: property.title, style: "height: 200px; object-fit: cover;" %>
+            <% else %>
+              <%= image_tag "default_property_image.jpg", class: "card-img-top", alt: "No image", style: "height: 200px; object-fit: cover;" %>
+            <% end %>
+            <div class="card-body">
+              <h5 class="card-title"><%= property.title %></h5>
+              <p class="card-text">
+                <%= property.street_address %>, <%= property.city %>, <%= property.state %> <%= property.zip_code %>
+              </p>
+              <p class="card-text">Price: <%= number_to_currency(property.price) %></p>
+              <%= link_to "View Details", property_path(property), class: "btn btn-primary" %>
+            </div>
           </div>
         </div>
-      </div>
-    <% end %>
-  </div>
-<% else %>
-  <p>You haven't expressed interest in any properties yet. <%= link_to 'Browse properties', properties_path %></p>
-<% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      You haven’t expressed interest in any properties yet. 
+      <%= link_to "Browse Properties", properties_path, class: "alert-link" %>
+    </div>
+  <% end %>
+</div>
